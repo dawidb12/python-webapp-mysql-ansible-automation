@@ -45,5 +45,3 @@ If you want to destroy the existing testing environment, run:
 ```sh
 molecule destroy
 ```
-
-[def]: https://devops.stackexchange.com/a/1247
