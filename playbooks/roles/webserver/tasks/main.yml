@@ -1,0 +1,37 @@
+---
+- name: Gather the package facts.
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: Install nginx and curl.
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: true
+  with_items: "{{ packages }}"
+  when: "item not in ansible_facts.packages"
+  loop: "{{ packages }}"
+
+- name: Ensure nginx is started and enabled.
+  service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Copy custom maintenance page.
+  template:
+    src: "templates/maintenance.html.j2"
+    dest: "/var/www/html/maintenance.html"
+    owner: root
+    group: root
+  notify: restart_nginx
+
+- name: Copy nginx configuration.
+  tags: notest
+  template:
+    src: "templates/nginx.conf.j2"
+    dest: "/etc/nginx/nginx.conf"
+    owner: root
+    group: root
+  notify: restart_nginx
+  

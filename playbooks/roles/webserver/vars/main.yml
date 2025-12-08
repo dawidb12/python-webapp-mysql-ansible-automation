@@ -1,0 +1,5 @@
+packages:
+  - nginx
+  - curl
+maint_header: "Wkrótce wracamy!"
+maint_content: "Trwają prace serwisowe. Przepraszamy za kłopot."

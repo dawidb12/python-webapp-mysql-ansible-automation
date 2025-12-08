@@ -1,0 +1,67 @@
+---
+- name: Prepare an environment.
+  block:
+  - name: Gather the package facts.
+    ansible.builtin.package_facts:
+      manager: auto
+
+  - name: Install packages.
+    apt:
+      name: "{{ item }}"
+      state: present
+      update_cache: true
+    with_items: "{{ packages }}"
+    when: "item not in ansible_facts.packages"
+    loop: "{{ packages }}"
+  
+  - name: Check if an 'app' directory exists.
+    stat:
+      path: "{{ app_path }}"
+    register: app_dir_result
+
+  - name: Create an 'app' directory.
+    file:
+      path: "{{ app_path }}"
+      state: directory
+      owner: "{{ app_owner }}"
+      group: "{{ app_group }}"
+    when: not app_dir_result.stat.exists
+
+  - name: Copy the app code.
+    template:
+      src: templates/app.py.j2
+      dest: "{{ app_path }}/app.py"
+      owner: "{{ app_owner }}"
+      group: "{{ app_group }}"
+
+  - name: Copy other webapp components.
+    copy:
+      src: "{{ item }}"
+      dest: "{{ app_path }}"
+      owner: "{{ app_owner }}"
+      group: "{{ app_group }}"
+    with_items:
+      "{{ webapp_files }}"
+
+  - name: Prepare systemd unit for launching the app.
+    template:
+      src: "templates/pythonapp.service.j2"
+      dest: "{{ systemd_dir }}/{{ pythonapp_service_unit }}"
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: Force systemd to reread configs.
+    systemd_service:
+      daemon_reload: true
+  become: true
+
+- name: Install pip packages.
+  command: "sudo -u {{ app_owner }} pip3 install -r {{ app_path }}/requirements.txt --break-system-packages"
+  changed_when: false
+
+- name: Run the app.
+  service:
+    name: "{{ pythonapp_service_unit }}"
+    state: started
+  become: true
