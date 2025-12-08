@@ -1,3 +1,5 @@
+#### This project reflects the small environment with Flask Python webapp integrated with MySQL database. Its installation is automated using Ansible.
+
 ## How to prepare the environment?
 
 Please make sure that ssh keypair exists in Vagrantfile directory. If not, follow the procedure at: https://devops.stackexchange.com/a/1247.
