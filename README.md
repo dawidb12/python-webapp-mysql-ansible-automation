@@ -2,7 +2,7 @@
 
 ## How to prepare the environment?
 
-Please make sure that ssh keypair exists in Vagrantfile directory. If not, follow the procedure at: https://devops.stackexchange.com/a/1247.
+Please make sure that ssh keypair exists in Vagrantfile directory. If not, follow [this procedure](https://devops.stackexchange.com/a/1247).
 
 ## How to run the playbook?
 
@@ -45,3 +45,5 @@ If you want to destroy the existing testing environment, run:
 ```sh
 molecule destroy
 ```
+
+[def]: https://devops.stackexchange.com/a/1247
