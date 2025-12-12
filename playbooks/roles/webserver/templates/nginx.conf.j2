@@ -7,7 +7,7 @@ http {
 
  upstream localhost {
 {% for host in groups['app'] %}
-    server {{ hostvars[host]['ansible_facts']['eth1']['ipv4']['address'] }}:5000;
+    server {{ hostvars[host].ansible_host }}:5000;
 {% endfor %}
  }
  server {
